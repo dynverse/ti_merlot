@@ -1,6 +1,6 @@
 id: merlot
-docker_repository: dynverse/dynmethods:merlot
-container_url: https://github.com/dynverse/dynmethods/tree/master/containers/merlot
+docker_repository: dynverse/ti_merlot
+container_url: https://github.com/dynverse/ti_merlot
 name: MERLoT
 type: algorithm
 platform: R
