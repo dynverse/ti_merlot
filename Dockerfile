@@ -1,6 +1,6 @@
 FROM dynverse/dynwrap:bioc
 
-LABEL version 0.1.0.1
+LABEL version 0.1.0
 
 RUN R -e 'devtools::install_cran("destiny")'
 
@@ -21,4 +21,4 @@ RUN R -e "devtools::install_github('soedinglab/merlot')"
 
 ADD . /code
 
-ENTRYPOINT /code/run.sh
+ENTRYPOINT Rscript /code/run.R
