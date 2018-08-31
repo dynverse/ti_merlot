@@ -8,9 +8,10 @@ Bootstrap: shub
 From: dynverse/dynwrap:bioc
 
 %labels
-    version 0.1.0
+    version 0.1.1
 
 %post
+    chmod -R a+r /code
     R -e 'devtools::install_cran("destiny")'
     apt-get update && apt-get install -y libcgal-dev libglu1-mesa-dev libglu1-mesa-dev
     apt-get install -y python3 python3-tk python3-pip
