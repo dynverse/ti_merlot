@@ -12,6 +12,7 @@ From: dynverse/dynwrap:bioc
 
 %post
     chmod -R a+r /code
+    chmod a+x /code
     R -e 'devtools::install_cran("destiny")'
     apt-get update && apt-get install -y libcgal-dev libglu1-mesa-dev libglu1-mesa-dev
     apt-get install -y python3 python3-tk python3-pip
