@@ -10,9 +10,11 @@ From: dynverse/dynwrap:bioc
 %labels
     version 0.1.1
 
+%files
+    . /code
+
 %post
-    chmod -R a+r /code
-    chmod a+x /code
+    chmod -R 755 '/code'
     R -e 'devtools::install_cran("destiny")'
     apt-get update && apt-get install -y libcgal-dev libglu1-mesa-dev libglu1-mesa-dev
     apt-get install -y python3 python3-tk python3-pip
@@ -22,9 +24,6 @@ From: dynverse/dynwrap:bioc
     apt-get -y install libudunits2-dev
     Rscript -e 'devtools::install_cran("udunits2", configure.args =  c(udunits2 = "--with-udunits2-include=/usr/include/udunits2"))'
     R -e "devtools::install_github('soedinglab/merlot')"
-
-%files
-    . /code
 
 %runscript
     exec Rscript /code/run.R
