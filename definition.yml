@@ -1,5 +1,6 @@
 id: merlot
 docker_repository: dynverse/ti_merlot
+singularity_collection: 1553
 container_url: https://github.com/dynverse/ti_merlot
 name: MERLoT
 type: algorithm
