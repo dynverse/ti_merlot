@@ -125,16 +125,11 @@ wrapper_type: trajectory
 doi: 10.1101/261768
 google_scholar_cluster_id: '9472249178536832849'
 trajectory_types:
-- cycle
 - linear
 - bifurcation
 - convergence
 - multifurcation
-- binary_tree
 - tree
-- acyclic_graph
-- graph
-- disconnected_graph
 topology_inference: free
 license: GPL-3
 authors:
