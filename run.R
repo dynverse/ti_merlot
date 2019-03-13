@@ -1,3 +1,7 @@
+#!/usr/local/bin/Rscript
+
+task <- dyncli::main()
+
 library(jsonlite)
 library(readr)
 library(dplyr)
@@ -9,20 +13,10 @@ library(destiny)
 #   ____________________________________________________________________________
 #   Load data                                                               ####
 
-data <- read_rds("/ti/input/data.rds")
-params <- jsonlite::read_json("/ti/input/params.json")
-
-#' @examples
-#' data <- dyntoy::generate_dataset(model = "bifurcating") %>% c(., .$prior_information)
-#' params <- yaml::read_yaml("containers/merlot/definition.yml")$parameters %>%
-#'   {.[names(.) != "forbidden"]} %>%
-#'   map(~ .$default)
-
-
-expression <- data$expression
-end_n <- data$end_n
-start_id <- data$start_id
-
+expression <- as.matrix(task$expression)
+end_n <- task$priors$end_n
+start_id <- task$priors$start_id
+params <- task$params
 
 #   ____________________________________________________________________________
 #   Infer trajectory                                                        ####
@@ -137,12 +131,12 @@ dimred <-
   select(cell_id, everything())
 
 # save
-output <- lst(
-  cell_ids = rownames(expression),
-  milestone_network,
-  progressions,
-  dimred,
-  timings = checkpoints
-)
+output <- dynwrap::wrap_data(cell_ids = rownames(expression)) %>%
+  dynwrap::add_trajectory(
+    milestone_network = milestone_network,
+    progressions = progressions
+  ) %>%
+  dynwrap::add_dimred(dimred) %>%
+  dynwrap::add_timings(checkpoints)
 
-write_rds(output, "/ti/output/output.rds")
+dyncli::write_output(output, task$output)

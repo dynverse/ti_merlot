@@ -1,13 +1,49 @@
-id: merlot
-docker_repository: dynverse/ti_merlot
-singularity_collection: 1553
-container_url: https://github.com/dynverse/ti_merlot
-name: MERLoT
-source: tool
-platform: R
+method:
+  id: merlot
+  name: MERLoT
+  tool_id: merlot
+  source: tool
+  platform: R
+  url: https://github.com/soedinglab/merlot
+  license: GPL-3
+  authors:
+  - given: Gonzalo
+    family: Parra
+    email: parra.gonzalo@gmail.com
+    github: gonzaparra
+    ORCID: 0000-0003-2446-016X
+  - given: Johannes
+    family: Söding
+    email: soeding@mpibpc.mpg.de
+    github: soedinglab
+    ORCID: 0000-0001-9642-8244
+
+manuscript:
+  doi: 10.1101/261768
+  google_scholar_cluster_id: '9472249178536832849'
+  preprint_date: '2018-02-08'
+
+container:
+  url: https://github.com/dynverse/ti_merlot
+  docker: dynverse/ti_merlot
+
+wrapper:
+  type: trajectory
+  topology_inference: free
+  trajectory_types:
+  - linear
+  - bifurcation
+  - convergence
+  - multifurcation
+  - tree
+  example: /code/example.R
+  input_required:
+  - expression
+  - end_n
+
 parameters:
-  sigma:
-    type: discrete
+  - id: sigma
+    type: character
     default: local
     values:
     - local
@@ -19,8 +55,8 @@ parameters:
       \item a numeric global sigma -- a global sigma will be calculated using \code{\link[destiny:find_sigmas]{destiny::find_sigmas()}}
       \item or a \code{\link[destiny:Sigmas-class]{destiny::Sigmas-class()}} object.
       }
-  distance:
-    type: discrete
+  - id: distance
+    type: character
     default: euclidean
     values:
     - euclidean
@@ -33,116 +69,93 @@ parameters:
       \item cosine distance (1-corr(c_1, c_2)), or
       \item rank correlation distance (1-corr(rank(c_1), rank(c_2)))
       }
-  ndim:
+  - id: ndim
     type: integer
     default: 20
-    upper: 20
-    lower: 2
+    distribution:
+      type: uniform
+      upper: 20
+      lower: 2
     description: Number of eigenvectors/dimensions to return
-  density_norm:
+  - id: density_norm
     type: logical
     default: yes
-    values:
-    - 'TRUE'
-    - 'FALSE'
     description: logical. If TRUE, use density normalisation
-  n_local_lower:
+  - id: n_local_lower
     type: integer
     default: 5
-    upper: 20
-    lower: 2
+    distribution:
+      type: uniform
+      upper: 20
+      lower: 2
     description: If sigma == 'local', the \code{n_local_lower}:\code{n_local_upper}
       nearest neighbor(s) determine(s) the local sigma
-  n_local_upper:
+  - id: n_local_upper
     type: integer
     default: 7
-    upper: 20
-    lower: 2
+    distribution:
+      type: uniform
+      upper: 20
+      lower: 2
     description: See \code{n_local_lower}
-  w_width:
+  - id: w_width
     type: numeric
     default: 0.01
-    upper: 1.0
-    lower: 0.0001
-    distribution: expuniform
+    distribution:
+      type: expuniform
+      upper: 1.0
+      lower: 0.0001
     description: Window width to use for deciding the branch cutoff
-  n_components_to_use:
+  - id: n_components_to_use
     type: integer
     default: 3.0
-    upper: 20.0
-    lower: 2.0
+    distribution:
+      type: uniform
+      upper: 20.0
+      lower: 2.0
     description: Which components to use in downstream analysis
-  N_yk:
+  - id: N_yk
     type: integer
     default: 100.0
-    upper: 1000.0
-    lower: 2.0
+    distribution:
+      type: uniform
+      upper: 1000.0
+      lower: 2.0
     description: number of nodes for the elastic principal tree
-  lambda_0:
+  - id: lambda_0
     type: numeric
     default: 8.0e-10
-    upper: 1.0e-6
-    lower: 1.0e-12
-    distribution: expuniform
+    distribution:
+      type: expuniform
+      upper: 1.0e-6
+      lower: 1.0e-12
     description: principal elastic tree energy function parameter.
-  mu_0:
+  - id: mu_0
     type: numeric
     default: 0.0025
-    upper: 0.005
-    lower: 0.0005
+    distribution:
+      type: uniform
+      upper: 0.005
+      lower: 0.0005
     description: principal elastic tree energy function parameter.
-  increaseFactor_mu:
+  - id: increaseFactor_mu
     type: numeric
     default: 20.0
-    upper: 50.0
-    lower: 2.0
+    distribution:
+      type: uniform
+      upper: 50.0
+      lower: 2.0
     description: factor by which the mu will be increased for the embedding
-  increaseFactor_lambda:
+  - id: increaseFactor_lambda
     type: numeric
     default: 20.0
-    upper: 50.0
-    lower: 2.0
+    distribution:
+      type: uniform
+      upper: 50.0
+      lower: 2.0
     description: factor by which the mu will be increased for the embedding
-  FixEndpoints:
+  - id: FixEndpoints
     type: logical
     default: no
-    values:
-    - 'TRUE'
-    - 'FALSE'
     description: Documentation not provided by authors
-  forbidden: n_local_lower > n_local_upper
-input:
-  format: rds
-  required:
-  - expression
-  - end_n
-  optional: start_id
-output:
-  format: rds
-  outputs:
-  - dimred
-  - trajectory
-wrapper_type: trajectory
-doi: 10.1101/261768
-google_scholar_cluster_id: '9472249178536832849'
-trajectory_types:
-- linear
-- bifurcation
-- convergence
-- multifurcation
-- tree
-topology_inference: free
-license: GPL-3
-authors:
-- given: Gonzalo
-  family: Parra
-  email: parra.gonzalo@gmail.com
-  github: gonzaparra
-  ORCID: 0000-0003-2446-016X
-- given: Johannes
-  family: Söding
-  email: soeding@mpibpc.mpg.de
-  github: soedinglab
-  ORCID: 0000-0001-9642-8244
-preprint_date: '2018-02-08'
-code_url: https://github.com/soedinglab/merlot
+  - forbidden: n_local_lower > n_local_upper
