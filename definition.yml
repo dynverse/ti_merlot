@@ -36,7 +36,6 @@ wrapper:
   - convergence
   - multifurcation
   - tree
-  example: /code/example.R
   input_required:
   - expression
   - end_n
