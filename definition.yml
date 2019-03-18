@@ -88,24 +88,24 @@ parameters:
     default: 0.01
     distribution:
       type: expuniform
-      upper: 1.0
       lower: 0.0001
+      upper: 1.0
     description: Window width to use for deciding the branch cutoff
   - id: n_components_to_use
     type: integer
-    default: 3.0
+    default: 3
     distribution:
       type: uniform
-      upper: 20.0
-      lower: 2.0
+      lower: 2
+      upper: 20
     description: Which components to use in downstream analysis
   - id: N_yk
     type: integer
-    default: 100.0
+    default: 100
     distribution:
       type: uniform
-      upper: 1000.0
-      lower: 2.0
+      upper: 1000
+      lower: 2
     description: number of nodes for the elastic principal tree
   - id: lambda_0
     type: numeric
@@ -125,22 +125,21 @@ parameters:
     description: principal elastic tree energy function parameter.
   - id: increaseFactor_mu
     type: numeric
-    default: 20.0
+    default: 20
     distribution:
       type: uniform
-      upper: 50.0
-      lower: 2.0
+      upper: 50
+      lower: 2
     description: factor by which the mu will be increased for the embedding
   - id: increaseFactor_lambda
     type: numeric
-    default: 20.0
+    default: 20
     distribution:
       type: uniform
-      upper: 50.0
-      lower: 2.0
+      upper: 50
+      lower: 2
     description: factor by which the mu will be increased for the embedding
   - id: FixEndpoints
     type: logical
     default: no
     description: Documentation not provided by authors
-  - forbidden: n_local_lower > n_local_upper
