@@ -23,9 +23,6 @@ params <- task$params
 
 checkpoints <- list(method_afterpreproc = as.numeric(Sys.time()))
 
-# create n_local vector
-n_local <- seq(params$n_local_lower, params$n_local_upper, by = 1)
-
 #### Example fromrom inst/examples/ExampleGuo2010.R
 if(!is.null(end_n)) {
   n_components_to_use <- end_n - 1
@@ -39,8 +36,8 @@ DatasetDM <- destiny::DiffusionMap(
   distance = params$distance,
   n_eigs = ndim,
   density_norm = params$density_norm,
-  n_local = n_local,
-  verbose = F
+  n_local = params$n_local,
+  verbose = FALSE
 )
 
 # Extract dimensionality reduction
