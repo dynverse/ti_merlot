@@ -16,7 +16,7 @@ library(destiny)
 expression <- as.matrix(task$expression)
 end_n <- task$priors$end_n
 start_id <- task$priors$start_id
-params <- task$params
+parameters <- task$parameters
 
 #   ____________________________________________________________________________
 #   Infer trajectory                                                        ####
@@ -27,16 +27,16 @@ checkpoints <- list(method_afterpreproc = as.numeric(Sys.time()))
 if(!is.null(end_n)) {
   n_components_to_use <- end_n - 1
 }
-ndim <- max(n_components_to_use, params$ndim) # always make sure that enough components are extracted, even if the provided n_components is too low
+ndim <- max(n_components_to_use, parameters$ndim) # always make sure that enough components are extracted, even if the provided n_components is too low
 
 # Embed Cells into their manifold, in this case we use Diffusion Maps as calculated by Destiny
 DatasetDM <- destiny::DiffusionMap(
   data = expression,
-  sigma = params$sigma,
-  distance = params$distance,
+  sigma = parameters$sigma,
+  distance = parameters$distance,
   n_eigs = ndim,
-  density_norm = params$density_norm,
-  n_local = params$n_local,
+  density_norm = parameters$density_norm,
+  n_local = parameters$n_local,
   verbose = FALSE
 )
 
@@ -55,20 +55,20 @@ ScaffoldTree <- merlot::CalculateScaffoldTree(
 # We calculate the elastic principal tree using the scaffold tree for its initialization
 ElasticTree <- merlot::CalculateElasticTree(
   ScaffoldTree = ScaffoldTree,
-  N_yk = params$N_yk,
-  lambda_0 = params$lambda_0,
-  mu_0 = params$mu_0,
-  FixEndpoints = params$FixEndpoints
+  N_yk = parameters$N_yk,
+  lambda_0 = parameters$lambda_0,
+  mu_0 = parameters$mu_0,
+  FixEndpoints = parameters$FixEndpoints
 )
 
 # Embedd the principal elastic tree into the gene expression space from which it was calculated.
 EmbeddedTree <- merlot::GenesSpaceEmbedding(
   ExpressionMatrix = expression,
   ElasticTree = ElasticTree,
-  lambda_0 = params$lambda_0,
-  mu_0 = params$mu_0,
-  increaseFactor_mu = params$increaseFactor_mu,
-  increaseFactor_lambda = params$increaseFactor_lambda
+  lambda_0 = parameters$lambda_0,
+  mu_0 = parameters$mu_0,
+  increaseFactor_mu = parameters$increaseFactor_mu,
+  increaseFactor_lambda = parameters$increaseFactor_lambda
 )
 
 # Calculate Pseudotimes for the nodes in the Tree in the full gene expression space.
