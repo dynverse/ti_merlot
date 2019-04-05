@@ -1,52 +1,42 @@
-library(jsonlite)
-library(readr)
-library(dplyr)
-library(purrr)
+#!/usr/local/bin/Rscript
 
-library(merlot)
-library(destiny)
+task <- dyncli::main()
+
+library(dynwrap, warn.conflicts = FALSE)
+library(dplyr, warn.conflicts = FALSE)
+library(purrr, warn.conflicts = FALSE)
+
+library(merlot, warn.conflicts = FALSE)
+library(destiny, warn.conflicts = FALSE)
 
 #   ____________________________________________________________________________
 #   Load data                                                               ####
 
-data <- read_rds("/ti/input/data.rds")
-params <- jsonlite::read_json("/ti/input/params.json")
-
-#' @examples
-#' data <- dyntoy::generate_dataset(model = "bifurcating") %>% c(., .$prior_information)
-#' params <- yaml::read_yaml("containers/merlot/definition.yml")$parameters %>%
-#'   {.[names(.) != "forbidden"]} %>%
-#'   map(~ .$default)
-
-
-expression <- data$expression
-end_n <- data$end_n
-start_id <- data$start_id
-
+expression <- as.matrix(task$expression)
+end_n <- task$priors$end_n
+start_id <- task$priors$start_id
+parameters <- task$parameters
 
 #   ____________________________________________________________________________
 #   Infer trajectory                                                        ####
 
 checkpoints <- list(method_afterpreproc = as.numeric(Sys.time()))
 
-# create n_local vector
-n_local <- seq(params$n_local_lower, params$n_local_upper, by = 1)
-
-#### Example fromrom inst/examples/ExampleGuo2010.R
+#### Example from inst/examples/ExampleGuo2010.R
 if(!is.null(end_n)) {
   n_components_to_use <- end_n - 1
 }
-ndim <- max(n_components_to_use, params$ndim) # always make sure that enough components are extracted, even if the provided n_components is too low
+ndim <- max(n_components_to_use, parameters$ndim) # always make sure that enough components are extracted, even if the provided n_components is too low
 
 # Embed Cells into their manifold, in this case we use Diffusion Maps as calculated by Destiny
 DatasetDM <- destiny::DiffusionMap(
   data = expression,
-  sigma = params$sigma,
-  distance = params$distance,
+  sigma = parameters$sigma,
+  distance = parameters$distance,
   n_eigs = ndim,
-  density_norm = params$density_norm,
-  n_local = n_local,
-  verbose = F
+  density_norm = parameters$density_norm,
+  n_local = parameters$n_local,
+  verbose = FALSE
 )
 
 # Extract dimensionality reduction
@@ -64,20 +54,20 @@ ScaffoldTree <- merlot::CalculateScaffoldTree(
 # We calculate the elastic principal tree using the scaffold tree for its initialization
 ElasticTree <- merlot::CalculateElasticTree(
   ScaffoldTree = ScaffoldTree,
-  N_yk = params$N_yk,
-  lambda_0 = params$lambda_0,
-  mu_0 = params$mu_0,
-  FixEndpoints = params$FixEndpoints
+  N_yk = parameters$N_yk,
+  lambda_0 = parameters$lambda_0,
+  mu_0 = parameters$mu_0,
+  FixEndpoints = parameters$FixEndpoints
 )
 
 # Embedd the principal elastic tree into the gene expression space from which it was calculated.
 EmbeddedTree <- merlot::GenesSpaceEmbedding(
   ExpressionMatrix = expression,
   ElasticTree = ElasticTree,
-  lambda_0 = params$lambda_0,
-  mu_0 = params$mu_0,
-  increaseFactor_mu = params$increaseFactor_mu,
-  increaseFactor_lambda = params$increaseFactor_lambda
+  lambda_0 = parameters$lambda_0,
+  mu_0 = parameters$mu_0,
+  increaseFactor_mu = parameters$increaseFactor_mu,
+  increaseFactor_lambda = parameters$increaseFactor_lambda
 )
 
 # Calculate Pseudotimes for the nodes in the Tree in the full gene expression space.
@@ -137,12 +127,13 @@ dimred <-
   select(cell_id, everything())
 
 # save
-output <- lst(
-  cell_ids = rownames(expression),
-  milestone_network,
-  progressions,
-  dimred,
-  timings = checkpoints
-)
+output <- 
+  dynwrap::wrap_data(cell_ids = rownames(expression)) %>%
+  dynwrap::add_trajectory(
+    milestone_network = milestone_network,
+    progressions = progressions
+  ) %>%
+  dynwrap::add_dimred(dimred) %>%
+  dynwrap::add_timings(checkpoints)
 
-write_rds(output, "/ti/output/output.rds")
+dyncli::write_output(output, task$output)
