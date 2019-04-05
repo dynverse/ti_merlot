@@ -2,13 +2,12 @@
 
 task <- dyncli::main()
 
-library(jsonlite)
-library(readr)
-library(dplyr)
-library(purrr)
+library(dynwrap, warn.conflicts = FALSE)
+library(dplyr, warn.conflicts = FALSE)
+library(purrr, warn.conflicts = FALSE)
 
-library(merlot)
-library(destiny)
+library(merlot, warn.conflicts = FALSE)
+library(destiny, warn.conflicts = FALSE)
 
 #   ____________________________________________________________________________
 #   Load data                                                               ####
@@ -23,7 +22,7 @@ parameters <- task$parameters
 
 checkpoints <- list(method_afterpreproc = as.numeric(Sys.time()))
 
-#### Example fromrom inst/examples/ExampleGuo2010.R
+#### Example from inst/examples/ExampleGuo2010.R
 if(!is.null(end_n)) {
   n_components_to_use <- end_n - 1
 }
@@ -128,7 +127,8 @@ dimred <-
   select(cell_id, everything())
 
 # save
-output <- dynwrap::wrap_data(cell_ids = rownames(expression)) %>%
+output <- 
+  dynwrap::wrap_data(cell_ids = rownames(expression)) %>%
   dynwrap::add_trajectory(
     milestone_network = milestone_network,
     progressions = progressions
