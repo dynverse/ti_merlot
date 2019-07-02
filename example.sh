@@ -1,7 +1,7 @@
 #!/usr/local/bin/Rscript
 
 # generate dataset with certain seed
-set.seed(1)
+set.seed(2)
 data <- dyntoy::generate_dataset(
   id = "specific_example/merlot",
   num_cells = 500,
@@ -12,7 +12,7 @@ data <- dyntoy::generate_dataset(
 
 # add method specific args (if needed)
 data$parameters <- list()
-data$seed <- 1L
+data$seed <- 2L
 
 # write example dataset to file
 file <- commandArgs(trailingOnly = TRUE)[[1]]
